@@ -1,9 +1,8 @@
 import sys
-import importlib
 import maya.api.OpenMaya as om
 import maya.cmds as cmds
 from matSelector import MatSelector
-from matBuilder import MatBuilder
+from matBuildSelector import BuildMaterial, MatBuildSelector
 
 def maya_useNewAPI():
     """
@@ -13,7 +12,7 @@ def maya_useNewAPI():
     pass
 
 def reload_materials_plugin(*args):
-    print("reloading materialsPlugin")
+    print("Reloading materialsPlugin")
     plugin_name = "materialsPlugin.py"
 
     if cmds.pluginInfo(plugin_name, query=True, loaded=True):
@@ -23,7 +22,7 @@ def reload_materials_plugin(*args):
     import time
     time.sleep(0.5)
 
-    for module_name in ["matSelector", "matBuilder", "materialsPlugin"]:
+    for module_name in ["matSelector", "matBuildSelector", "buildMaterial", "materialsPlugin"]:
         if module_name in sys.modules:
             del sys.modules[module_name]
 
@@ -34,7 +33,7 @@ def open_material_selector(*args):
     mat_selector.run()
 
 def open_material_builder(*args):
-    mat_builder = MatBuilder()
+    mat_builder = MatBuildSelector()
     mat_builder.run()
 
 def initializePlugin(plugin):
@@ -65,7 +64,8 @@ def initializePlugin(plugin):
         )
 
         plugin_fn.registerCommand(MatSelector.kPluginCmdName, MatSelector.cmdCreator)
-        plugin_fn.registerCommand(MatBuilder.kPluginCmdName, MatBuilder.cmdCreator)
+        plugin_fn.registerCommand(MatBuildSelector.kPluginCmdName, MatBuildSelector.cmdCreator)
+        plugin_fn.registerCommand(BuildMaterial.kPluginCmdName, BuildMaterial.cmdCreator)
 
     except Exception as e:
         sys.stderr.write(
@@ -86,7 +86,8 @@ def uninitializePlugin(plugin):
             cmds.deleteUI("MaterialsPlugin", menu=True)
 
         plugin_fn.deregisterCommand(MatSelector.kPluginCmdName)
-        plugin_fn.deregisterCommand(MatBuilder.kPluginCmdName)
+        plugin_fn.deregisterCommand(MatBuildSelector.kPluginCmdName)
+        plugin_fn.deregisterCommand(BuildMaterial.kPluginCmdName)
 
     except Exception as e:
         sys.stderr.write(
