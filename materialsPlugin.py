@@ -20,7 +20,7 @@ def reload_materials_plugin(*args):
 
     cmds.refresh()
     import time
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     for module_name in ["matSelector", "matBuildSelector", "buildMaterial", "materialsPlugin"]:
         if module_name in sys.modules:
