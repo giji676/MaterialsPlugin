@@ -78,15 +78,20 @@ class MatBuildSelector(om.MPxCommand):
             cmds.text(self.lbl_output_path, edit=True, label=self.output_path)
 
     def unzip(self, inp, output):
+        if output == "":
+            cmds.inViewMessage(amg=f"Please select the output path", pos='midCenter', fade=True)
+            return False
         if not os.path.exists(inp):
             cmds.inViewMessage(amg=f"File '{inp}' not found", pos='midCenter', fade=True)
-            return
+            return False
         if not os.path.exists(output):
             os.mkdir(output)
 
+        cmds.text(self.lbl_status_update, edit=True, label="Unzipping")
         with zipfile.ZipFile(inp, 'r') as zip_ref:
             zip_ref.extractall(output)
             self.rename_inside_dir(output)
+            return True
 
     def rename_inside_dir(self, path):
         name = os.path.basename(path)
@@ -121,8 +126,9 @@ class MatBuildSelector(om.MPxCommand):
         cmds.text(self.lbl_status_update, edit=True, label="Started build")
 
         if self.is_zip:
-            cmds.text(self.lbl_status_update, edit=True, label="Unzipping")
-            self.unzip(self.zip_input_path, self.output_path)
+            zip_result = self.unzip(self.zip_input_path, self.output_path)
+            if not zip_result:
+                return
         else:
             if not os.path.exists(self.output_path):
                 os.mkdir(self.output_path)
