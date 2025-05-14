@@ -83,7 +83,7 @@ class BuildMaterial(om.MPxCommand):
 
         ambient_occ_file_n = None
         if AMBIENT_OCC != None:
-            ambient_occ_file_n = cmds.shadingNode('file', asTexture=True, name=ROUGHNESS)
+            ambient_occ_file_n = cmds.shadingNode('file', asTexture=True, name=AMBIENT_OCC)
             nodes.append(ambient_occ_file_n)
             cmds.setAttr(ambient_occ_file_n + '.fileTextureName', ambient_occ_path, type="string")
             cmds.connectAttr(place_2d_texture_n + '.outUV', ambient_occ_file_n + '.uvCoord', force=True)
@@ -146,7 +146,7 @@ class BuildMaterial(om.MPxCommand):
         cmds.connectAttr(normal_gl_file_n + '.outAlpha', bump_2d_n + '.bumpValue', force=True)
         cmds.setAttr(bump_2d_n + '.bumpInterp', 1)
 
-        ai_standard_surface_n = cmds.shadingNode('aiStandardSurface', asShader=True, name=f'{MAT_NAME}_aiStandardSurface')
+        ai_standard_surface_n = cmds.shadingNode('aiStandardSurface', asShader=True, name=f'{MAT_NAME}')
         nodes.append(ai_standard_surface_n)
         cmds.setAttr(ai_standard_surface_n + '.emission', 1.0)
         cmds.setAttr(ai_standard_surface_n + '.emissionColor', 0, 0, 0, type='double3')

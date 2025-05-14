@@ -13,6 +13,7 @@ Follow the steps below to install the matSelector plugin for Maya:
 `C:\Users\<username>\Documents\maya\<version>\Maya.env`
 2. Add the following line to the file:
 `MAYA_PLUG_IN_PATH = C:\Users\<username>\Documents\maya\<version>\plug-ins\matSelector`
+**Note:** If the **Maya.env** file doesn't exist, create it manually.
 
 ## Step 3: Enable the Plugin in Maya
 1. Open Maya and navigate to the **Plugin Manager**:
