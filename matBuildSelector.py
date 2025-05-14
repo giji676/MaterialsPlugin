@@ -80,10 +80,10 @@ class MatBuildSelector(om.MPxCommand):
     def unzip(self, inp, output):
         if output == "":
             cmds.inViewMessage(amg=f"Please select the output path", pos='midCenter', fade=True)
-            return False
+            return
         if not os.path.exists(inp):
             cmds.inViewMessage(amg=f"File '{inp}' not found", pos='midCenter', fade=True)
-            return False
+            return
         if not os.path.exists(output):
             os.mkdir(output)
 
@@ -91,7 +91,6 @@ class MatBuildSelector(om.MPxCommand):
         with zipfile.ZipFile(inp, 'r') as zip_ref:
             zip_ref.extractall(output)
             self.rename_inside_dir(output)
-            return True
 
     def rename_inside_dir(self, path):
         name = os.path.basename(path)
@@ -116,9 +115,13 @@ class MatBuildSelector(om.MPxCommand):
                 new_file_path = os.path.join(path, f"{name}_ambientocclusion{ext}")
             else:
                 new_file_path = os.path.join(path, f"{name}{ext}")
-            shutil.move(file_path, new_file_path)
+            if file_path != new_file_path:
+                shutil.move(file_path, new_file_path)
 
     def build_material(self, *args):
+        if self.output_path == "" or not os.path.exists(self.output_path):
+            cmds.inViewMessage(amg=f"Output path '{self.output_path}' missing or invalid", pos='midCenter', fade=True)
+            return
         if self.input_path == "" or not os.path.exists(self.input_path):
             cmds.inViewMessage(amg=f"Input path '{self.input_path}' missing or invalid", pos='midCenter', fade=True)
             return
@@ -126,9 +129,7 @@ class MatBuildSelector(om.MPxCommand):
         cmds.text(self.lbl_status_update, edit=True, label="Started build")
 
         if self.is_zip:
-            zip_result = self.unzip(self.zip_input_path, self.output_path)
-            if not zip_result:
-                return
+            self.unzip(self.zip_input_path, self.output_path)
         else:
             if not os.path.exists(self.output_path):
                 os.mkdir(self.output_path)
@@ -138,7 +139,8 @@ class MatBuildSelector(om.MPxCommand):
                     continue
                 file_path = os.path.join(self.input_path, file)
                 new_file_path = os.path.join(self.output_path, file)
-                shutil.copy(file_path, new_file_path)
+                if file_path != new_file_path:
+                    shutil.copy(file_path, new_file_path)
             self.rename_inside_dir(self.output_path)
 
         BuildMaterial(self.output_path, self.lbl_status_update)
